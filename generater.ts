@@ -28,7 +28,7 @@ const validate = (board: string[][], row: number, col: number, value: string): b
 }
 
 const fillvalue = (board: string[][], x: number = 0, y: number = 0) => {
-    if(y == n) {
+    if (y == n) {
         return board;
     }
     let offset = grn(0, n - 1);
@@ -51,14 +51,18 @@ const generateSudoku: () => string[][] = () => {
     const board: string[][] = Array.from({ length: n }, () => Array(n).fill('0'));
     fillvalue(board);
     const solvedBoard = board.map(row => row.slice());
-    for (let i = 0; i < HardLevel; ) {
-        const row = grn(0,n*n - 2*n + 1);
-        const col = grn(0,n*n - 2*n + 1) % n;
-        if (board[row][col] !== '0') {
-            board[row][col] = '0';
-            i++;
+    for (let i = 0; i < EasyLevel;) {
+        const row = grn(0, n - 1);
+        const col = grn(0, n - 1) % n;
+        try {
+            if (board[row][col] !== '0') {
+                board[row][col] = '0';
+                i++;
+            }
+        } catch (error) {
+            console.log(row + " " + col);
         }
     }
-    return board;
+    return { board, solvedBoard };
 };
 export { generateSudoku };

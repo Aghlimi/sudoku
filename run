@@ -1,0 +1,13 @@
+#!/bin/bash
+#!/bin/bash
+set -euo pipefail
+
+# Build the image
+docker buildx build -t sudoku .
+
+# Run the container with port forwarding and bind mount, but preserve node_modules in image
+docker run --rm \
+	-p 8081:8081 \
+	-v "$(pwd)":/app \
+	-v /app/node_modules \
+	sudoku

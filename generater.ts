@@ -60,7 +60,7 @@ const generateSudoku = (level: 'easy' | 'medium' | 'hard' = 'easy') => {
     return { board, solvedBoard };
 };
 
-export { generateSudoku };
+export { generateSudoku, validate };
 // console.log('[');
 // for (let index = 0; index < 100; index++) {
 //     console.log(`[${JSON.stringify(generateSudoku('hard').solvedBoard)}],`);

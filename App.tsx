@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { generateSudoku } from './generater';
+import { generateSudoku, validate } from './generater';
 import config from './config';
 const Keyboard = ({ setKey }: { setKey: (key: string) => void }) => {
     return (
@@ -16,10 +16,71 @@ const Keyboard = ({ setKey }: { setKey: (key: string) => void }) => {
     );
 }
 
+interface Node {
+    contain: boolean;
+    note: string[][];
+}
+
+const Notes = ({ notes, keyb }: { notes: Node | null, keyb: string }) => {
+    if (!notes) return null;
+    return (
+        <View style={{ flexDirection: 'column', flexWrap: 'wrap', width: '100%', height: '100%' }}>
+            {notes?.note?.map((row, rowIndex) => (
+                <View key={rowIndex} style={{ width: '33.33%' }}>
+                    {row?.map((note, colIndex) => {
+                        return (
+                            <Text key={colIndex} style={{ fontSize: 5, textAlign: 'center', backgroundColor: note == keyb ? 'red' : 'transparent' }}>
+                                {note}
+                            </Text>
+                        )
+                    })}
+                </View>
+            ))
+            }
+        </View >
+    );
+}
+
+const clearFromNotes = (board: Node, key: string) => {
+    const index = config.symbols.indexOf(key);
+    const nx = index % config.boxSize;
+    const ny = Math.floor(index / config.boxSize);
+    board.note[ny][nx] = '';
+    console.log(key, nx, ny, 'cleared');
+}
+
+const clear = (board: Node[][], row: number, col: number, value: string): void => {
+    for (let i = 0; i < config.n; i++) {
+        clearFromNotes(board[row][i], value);
+        clearFromNotes(board[i][col], value);
+    }
+    const boxRow = Math.floor(row / config.boxSize) * config.boxSize;
+    const boxCol = Math.floor(col / config.boxSize) * config.boxSize;
+
+    for (let i = boxRow; i < boxRow + config.boxSize; i++) {
+        for (let j = boxCol; j < boxCol + config.boxSize; j++) {
+            clearFromNotes(board[i][j], value);
+        }
+    }
+};
+
 export default function App() {
     const [solvedBoard, setSolvedBoard] = React.useState<string[][] | null>(null);
+    const [notes, setNotes] = React.useState<Node[][]>(Array.from({ length: config.n }, () =>
+        Array.from({ length: config.n }, () => ({
+            contain: true,
+            note: Array.from({
+                length: config.boxSize
+            },
+                () => Array.from({
+                    length: config.boxSize
+                },
+                    () => '1'
+                ))
+        }))
+    ));
     const [error, setError] = React.useState<number>(0);
-    const [key, setKey] = React.useState<string | null>(null);
+    const [key, setKey] = React.useState<string>('1');
     const [board, setBoard] = React.useState<string[][] | null>(null);
     React.useEffect(() => {
         const { board: boarde, solvedBoard }: { board: string[][], solvedBoard: string[][] } = generateSudoku('hard');
@@ -27,14 +88,47 @@ export default function App() {
         setSolvedBoard(solvedBoard);
     }, []);
 
+    React.useEffect(() => {
+        setNotes(Array.from({ length: config.n }, () =>
+            Array.from({ length: config.n }, () => ({
+                contain: true,
+                note: Array.from({
+                    length: config.boxSize
+                },
+                    () => Array.from({
+                        length: config.boxSize
+                    },
+                        () => ''
+                    ))
+            }))));
+    }, [solvedBoard]);
     const clickHandler = (x: number, y: number) => {
         if (board && board[y][x] == '0' && key != null) {
             if (solvedBoard && solvedBoard[y][x] == key) {
                 board[y][x] = key.toString();
+                clear(notes, y, x, key);
                 setBoard([...board]);
             } else {
                 setError(error + 1);
             }
+        }
+    }
+    const noteHandler = (x: number, y: number) => {
+        if (board && board[y][x] == '0' && key != null) {
+            const newNotes = [...notes];
+            const index = config.symbols.indexOf(key);
+            const nx = index % config.boxSize;
+            const ny = Math.floor(index / config.boxSize);
+            if (!validate(board, y, x, key)) {
+                return;
+            }
+            if (newNotes[y][x].note[ny][nx] != '') {
+                newNotes[y][x].note[ny][nx] = '';
+            } else {
+                newNotes[y][x].note[ny][nx] = key;
+                newNotes[y][x].contain = true;
+            }
+            setNotes(newNotes);
         }
     }
     return (<View>
@@ -42,7 +136,7 @@ export default function App() {
         {board?.map((row: string[], rowIndex: number) => (
             <View key={rowIndex} style={{ flexDirection: 'row' }} >
                 {row?.map((value, colIndex) => (
-                    <TouchableOpacity onLongPress={() => alert('long press')} key={colIndex} style={{
+                    <TouchableOpacity onLongPress={() => noteHandler(colIndex, rowIndex)} delayLongPress={100} key={colIndex} style={{
                         borderBottomWidth: (rowIndex + 1) % config.boxSize === 0 ? 3 : 1,
                         borderRightWidth: (colIndex + 1) % config.boxSize === 0 ? 3 : 1,
                         borderBottomColor: (rowIndex + 1) % config.boxSize === 0 ? 'black' : 'transparent',
@@ -54,7 +148,11 @@ export default function App() {
                         backgroundColor: value == key ? 'red' : 'none',
                         borderWidth: 1
                     }} onPress={() => clickHandler(colIndex, rowIndex)}>
-                        {value != '0' && <Text style={{ textAlign: 'center' }}>{value}</Text>}
+                        {
+                            value != '0' &&
+                            <Text style={{ textAlign: 'center' }}>{value}</Text> || notes &&
+                            notes[rowIndex][colIndex].contain && <Notes notes={notes[rowIndex][colIndex]} keyb={key} />
+                        }
                     </TouchableOpacity>
                 ))}
             </View>

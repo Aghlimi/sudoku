@@ -2,10 +2,28 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { generateSudoku, validate } from './generater';
 import config from './config';
-const Keyboard = ({ setKey }: { setKey: (key: string) => void }) => {
+
+const checkNotempty = (board: string[][] | null, solvedBoard: string[][] | null, value: string) => {
+    if (!board || !solvedBoard) return true;
+    try {
+        solvedBoard?.map((row, rowIndex) => row.map((col, colIndex) => {
+
+            if (col == value && board[rowIndex][colIndex] != value)throw Error('foundone');
+
+        }));
+    }
+    catch {
+        console.log("catched");
+        return true;
+    }
+    return false;
+}
+
+
+const Keyboard = ({ setKey, board, solvedBoard }: { setKey: (key: string) => void, board: string[][] | null, solvedBoard: string[][] | null }) => {
     return (
         <View style={{ flexDirection: 'row', width: 240 }}>
-            {config.symbols.map((key) => (
+            {config.symbols.map((key) => checkNotempty(board, solvedBoard, key) && (
                 <TouchableOpacity key={key} style={{ width: 15, height: 15, justifyContent: 'center', alignItems: 'center', borderWidth: 1 }}
                     onPress={() => setKey(key)}
                 >
@@ -20,6 +38,7 @@ interface Node {
     contain: boolean;
     note: string[][];
 }
+
 
 const Notes = ({ notes, keyb }: { notes: Node | null, keyb: string }) => {
     if (!notes) return null;
@@ -112,6 +131,8 @@ export default function App() {
                 setError(error + 1);
             }
         }
+        else if(board && board[y][x] != '0')
+            setKey(board[y][x]);
     }
     const noteHandler = (x: number, y: number) => {
         if (board && board[y][x] == '0' && key != null) {
@@ -136,7 +157,7 @@ export default function App() {
         {board?.map((row: string[], rowIndex: number) => (
             <View key={rowIndex} style={{ flexDirection: 'row' }} >
                 {row?.map((value, colIndex) => (
-                    <TouchableOpacity onLongPress={() => noteHandler(colIndex, rowIndex)} delayLongPress={100} key={colIndex} style={{
+                    <TouchableOpacity onLongPress={() => noteHandler(colIndex, rowIndex)} delayLongPress={200} key={colIndex} style={{
                         borderBottomWidth: (rowIndex + 1) % config.boxSize === 0 ? 3 : 1,
                         borderRightWidth: (colIndex + 1) % config.boxSize === 0 ? 3 : 1,
                         borderBottomColor: (rowIndex + 1) % config.boxSize === 0 ? 'black' : 'transparent',
@@ -157,7 +178,7 @@ export default function App() {
                 ))}
             </View>
         ))}
-        <Keyboard setKey={setKey} />
+        <Keyboard setKey={setKey} board={board} solvedBoard={solvedBoard} />
     </View>
     );
 }

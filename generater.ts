@@ -25,8 +25,6 @@ const fillvalue = (board: string[][], x = 0, y = 0): string[][] | null => {
     const nextX = (x + 1) % n;
     const nextY = nextX === 0 ? y + 1 : y;
     const shuffled = [...symbols].sort(() => Math.random() - 0.5);
-    //
-
     for (const value of shuffled) {
         if (validate(board, y, x, value)) {
             board[y][x] = value;

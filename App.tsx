@@ -8,28 +8,28 @@ const checkNotempty = (board: string[][] | null, solvedBoard: string[][] | null,
     try {
         solvedBoard?.map((row, rowIndex) => row.map((col, colIndex) => {
 
-            if (col == value && board[rowIndex][colIndex] != value)throw Error('foundone');
+            if (col == value && board[rowIndex][colIndex] != value) throw Error('foundone');
 
         }));
     }
     catch {
-        console.log("catched");
         return true;
     }
     return false;
 }
 
 
-const Keyboard = ({ setKey, board, solvedBoard }: { setKey: (key: string) => void, board: string[][] | null, solvedBoard: string[][] | null }) => {
+const Keyboard = ({ setKey, keyboard, board, solvedBoard }: { setKey: (key: string) => void, keyboard: string[], board: string[][] | null, solvedBoard: string[][] | null }) => {
     return (
         <View style={{ flexDirection: 'row', width: 240 }}>
-            {config.symbols.map((key) => checkNotempty(board, solvedBoard, key) && (
-                <TouchableOpacity key={key} style={{ width: 15, height: 15, justifyContent: 'center', alignItems: 'center', borderWidth: 1 }}
-                    onPress={() => setKey(key)}
+            {keyboard.map((keyc) => (
+                <TouchableOpacity key={keyc} style={{ width: 15, height: 15, justifyContent: 'center', alignItems: 'center', borderWidth: 1 }}
+                    onPress={() => setKey(keyc)}
                 >
-                    <Text >{key}</Text>
+                    <Text >{keyc}</Text>
                 </TouchableOpacity>
-            ))}
+            )
+            )}
         </View>
     );
 }
@@ -65,7 +65,6 @@ const clearFromNotes = (board: Node, key: string) => {
     const nx = index % config.boxSize;
     const ny = Math.floor(index / config.boxSize);
     board.note[ny][nx] = '';
-    console.log(key, nx, ny, 'cleared');
 }
 
 const clear = (board: Node[][], row: number, col: number, value: string): void => {
@@ -98,9 +97,36 @@ export default function App() {
                 ))
         }))
     ));
+    const [keyboard, setKeyboard] = React.useState<string[]>(config.symbols);
     const [error, setError] = React.useState<number>(0);
     const [key, setKey] = React.useState<string>('1');
     const [board, setBoard] = React.useState<string[][] | null>(null);
+    const newKeyboard = Array<string>();
+    if (keyboard.length == 0) {
+        return (
+            <View>
+                <Text>You Win!</Text>
+                <Text>Total Errors: {error}</Text>
+            </View>
+        );
+    }
+    
+    React.useEffect(() => {
+        let edited = false;
+        for (let i = 0; i < keyboard.length; i++) {
+            if (checkNotempty(board, solvedBoard, keyboard[i])) {
+                newKeyboard.push(keyboard[i]);
+                edited = true;
+            }
+        }
+        if (edited)
+            setKeyboard(newKeyboard);
+    }, [board]);
+    
+    if (keyboard.includes(key) == false && keyboard.length > 0) {
+        setKey(keyboard[0]);
+    }
+
     React.useEffect(() => {
         const { board: boarde, solvedBoard }: { board: string[][], solvedBoard: string[][] } = generateSudoku('hard');
         setBoard(boarde);
@@ -131,7 +157,7 @@ export default function App() {
                 setError(error + 1);
             }
         }
-        else if(board && board[y][x] != '0')
+        else if (board && board[y][x] != '0')
             setKey(board[y][x]);
     }
     const noteHandler = (x: number, y: number) => {
@@ -178,7 +204,7 @@ export default function App() {
                 ))}
             </View>
         ))}
-        <Keyboard setKey={setKey} board={board} solvedBoard={solvedBoard} />
+        <Keyboard setKey={setKey} keyboard={keyboard} board={board} solvedBoard={solvedBoard} />
     </View>
     );
 }

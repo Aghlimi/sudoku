@@ -60,6 +60,15 @@ const Notes = ({ notes, keyb }: { notes: Node | null, keyb: string }) => {
     );
 }
 
+const Settings = () => {
+    return (
+        <View>
+            <Text>Settings</Text>
+        </View>
+    )
+    // Placeholder for settings functionality
+}
+
 const clearFromNotes = (board: Node, key: string) => {
     const index = config.symbols.indexOf(key);
     const nx = index % config.boxSize;
@@ -84,7 +93,7 @@ const clear = (board: Node[][], row: number, col: number, value: string): void =
 
 export default function App() {
     const [solvedBoard, setSolvedBoard] = React.useState<string[][] | null>(null);
-    const [notes, setNotes] = React.useState<Node[][]>(Array.from({ length: config.n }, () =>
+    const [notes, setNotes] = React.useState<Node[][] | null>(Array.from({ length: config.n }, () =>
         Array.from({ length: config.n }, () => ({
             contain: true,
             note: Array.from({
@@ -97,12 +106,13 @@ export default function App() {
                 ))
         }))
     ));
-    const [keyboard, setKeyboard] = React.useState<string[]>(config.symbols);
+    // const [settingsVisible, setSettingsVisible] = React.useState<number>(0);
+    const [keyboard, setKeyboard] = React.useState<string[] | null>(config.symbols);
     const [error, setError] = React.useState<number>(0);
     const [key, setKey] = React.useState<string>('1');
     const [board, setBoard] = React.useState<string[][] | null>(null);
     const newKeyboard = Array<string>();
-    if (keyboard.length == 0) {
+    if (keyboard && keyboard.length == 0) {
         return (
             <View>
                 <Text>You Win!</Text>
@@ -110,7 +120,7 @@ export default function App() {
             </View>
         );
     }
-    
+
     React.useEffect(() => {
         let edited = false;
         for (let i = 0; i < keyboard.length; i++) {
@@ -122,7 +132,7 @@ export default function App() {
         if (edited)
             setKeyboard(newKeyboard);
     }, [board]);
-    
+
     if (keyboard.includes(key) == false && keyboard.length > 0) {
         setKey(keyboard[0]);
     }

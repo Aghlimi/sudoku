@@ -4,11 +4,8 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "env PORT=80 npx expo start --host 0.0.0.0",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "start": "expo start",
+    "build": "expo export --platform web --output-dir dist"
   },
   "dependencies": {
     "@react-native-picker/picker": "^2.11.4",
@@ -24,3 +21,4 @@
     "typescript": "^5.9.3"
   }
 }
+

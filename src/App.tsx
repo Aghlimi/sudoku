@@ -14,6 +14,7 @@ export default function App() {
     const [board, setBoard] = React.useState<string[][] | null>(null);
     const [solvedBoard, setSolvedBoard] = React.useState<string[][] | null>(null);
     const [notes, setNotes] = React.useState<Note[][] | null>(null);
+    const [not, setNot] = React.useState<Boolean>(false);
 
     React.useEffect(() => {
         if (settings === null) return;
@@ -26,19 +27,30 @@ export default function App() {
     return (
         <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <AppContext.Provider value={{ settings, setSettings, key, setKey, error, setError, board, setBoard, solvedBoard, setSolvedBoard, notes, setNotes }}>
+            <AppContext.Provider value={{ settings, setSettings, key, setKey, error, setError, board, setBoard, solvedBoard, setSolvedBoard, notes, setNotes, not }}>
                 {error && <Text style={{ color: 'red' }}>{error}</Text>}
                 {settings ? <View>
                     <Board />
                     <Keyboard />
-                    <Button title="Reset" onPress={() => {
-                        setSettings(null);
-                        setKey(settings?.symbols[0] || '1');
-                        setError(null);
-                        setBoard(null);
-                        setSolvedBoard(null);
-                        setNotes(null);
-                    }} />
+                    <View style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        justifyContent: 'space-between',
+                        backgroundColor: 'red'
+                    }}>
+                        <Button title={!not ? "note" : "play"} onPress={() => {
+                            setNot(!not);
+                        }} />
+                        <Button title="Reset" onPress={() => {
+                            setSettings(null);
+                            setKey(settings?.symbols[0] || '1');
+                            setError(null);
+                            setBoard(null);
+                            setSolvedBoard(null);
+                            setNotes(null);
+                        }} />
+                    </View>
                 </View>
                     : <Setting />
                 }

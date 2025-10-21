@@ -49,7 +49,7 @@ const CellContent = ({ cell, note }: { cell: string, note: Note | null }) => {
 }
 
 const Cell = ({ onPress, cell, rowIndex, cellIndex }: { onPress: () => void, cell: string, rowIndex: number, cellIndex: number }) => {
-    const { settings, key: key, notes, setNotes, board }: { settings: Config, key: string, notes: Note[][], setNotes: any, board: string[][] } = React.useContext(AppContext);
+    const { settings, key: key, notes, setNotes, board, not }: { settings: Config, key: string, notes: Note[][], setNotes: any, board: string[][], not: boolean } = React.useContext(AppContext);
     if (!settings) return null;
     const handleNote = () => {
         let newNote = notes.map((row: Note[]) => [...row]);
@@ -63,7 +63,10 @@ const Cell = ({ onPress, cell, rowIndex, cellIndex }: { onPress: () => void, cel
         setNotes(newNote);
     };
     return (
-        <TouchableOpacity onLongPress={handleNote} onPress={onPress} key={`${rowIndex}-${cellIndex}`} style={{
+        <TouchableOpacity onLongPress={handleNote} onPress={() => {
+            if (not) handleNote();
+            else onPress()
+        }} key={`${rowIndex}-${cellIndex}`} style={{
             ...styles.cell,
             backgroundColor: cell === key ? '#3247e8ff' : '#fff',
             borderBottomWidth: (rowIndex + 1) % settings.boxSize === 0 ? 3 : 1,

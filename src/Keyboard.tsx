@@ -32,6 +32,7 @@ const Keyboard = () => {
                 if(newKeyboard[(i + settings.symbols.indexOf(key) )% settings.n].numberof != 0)
                 {
                     setKey(newKeyboard[(i + settings.symbols.indexOf(key) )% settings.n].value);
+                    break;
                 }
             }
         }

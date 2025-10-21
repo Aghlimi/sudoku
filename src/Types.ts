@@ -10,4 +10,10 @@ interface Note {
     note: string[][];
 }
 
-export type { Config, Note };
+interface Key {
+    value: string;
+    numberof: number;
+}
+
+
+export type { Config, Note, Key };

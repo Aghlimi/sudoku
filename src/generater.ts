@@ -56,9 +56,3 @@ const generateSudoku = (settings: Config) => {
 };
 
 export { generateSudoku, validate };
-// console.log('[');
-// for (let index = 0; index < 100; index++) {
-//     console.log(`[${JSON.stringify(generateSudoku('hard').solvedBoard)}],`);
-    
-// }
-// console.log(']');

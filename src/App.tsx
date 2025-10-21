@@ -1,18 +1,14 @@
 import React from "react";
 import Board from "./Board";
 import Setting from "./Setting";
-import { Config,Note } from "./Types";
-import { Text, View } from "react-native";
+import { Config, Note } from "./Types";
+import { Text, View, Button } from "react-native";
 import Keyboard from "./Keyboard";
 import { AppContext } from "./context";
 import { generateSudoku } from "./generater";
+
 export default function App() {
-    const [settings, setSettings] = React.useState<Config | null>({
-        boxSize: 3,
-        n: 9,
-        level: 'easy',
-        symbols: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    });
+    const [settings, setSettings] = React.useState<Config | null>(null);
     const [key, setKey] = React.useState(settings?.symbols[0] || '1');
     const [error, setError] = React.useState<string | null>(null);
     const [board, setBoard] = React.useState<string[][] | null>(null);
@@ -24,19 +20,7 @@ export default function App() {
         const newBoard = generateSudoku(settings);
         setBoard(newBoard.board);
         setSolvedBoard(newBoard.solvedBoard);
-        setNotes(Array.from({ length: settings.n }, () =>
-            Array.from({ length: settings.n }, () => ({
-                contain: true,
-                note: Array.from({
-                    length: settings.boxSize
-                },
-                    () => Array.from({
-                        length: settings.boxSize
-                    },
-                        () => '0'
-                    ))
-            }))
-        ));
+        setNotes(Array.from({ length: settings.n }, () => Array.from({ length: settings.n }, () => ({ contain: true, note: Array.from({ length: settings.boxSize }, () => Array.from({ length: settings.boxSize }, () => '0')) }))));
     }, [settings]);
 
     return (
@@ -47,6 +31,14 @@ export default function App() {
                 {settings ? <View>
                     <Board />
                     <Keyboard />
+                    <Button title="Reset" onPress={() => {
+                        setSettings(null);
+                        setKey(settings?.symbols[0] || '1');
+                        setError(null);
+                        setBoard(null);
+                        setSolvedBoard(null);
+                        setNotes(null);
+                    }} />
                 </View>
                     : <Setting />
                 }

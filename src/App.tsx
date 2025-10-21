@@ -36,8 +36,7 @@ export default function App() {
                         display: 'flex',
                         flexDirection: 'row',
                         width: '100%',
-                        justifyContent: 'space-between',
-                        backgroundColor: 'red'
+                        justifyContent: 'space-between'
                     }}>
                         <Button title={!not ? "note" : "play"} onPress={() => {
                             setNot(!not);

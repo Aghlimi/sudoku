@@ -25,8 +25,17 @@ const Keyboard = () => {
             });
         });
         setKeyboard(newKeyboard);
+        if(newKeyboard[settings.symbols.indexOf(key)].numberof == 0)
+        {
+            for(let i = 0;i < settings.n;i++)
+            {
+                if(newKeyboard[(i + settings.symbols.indexOf(key) )% settings.n].numberof != 0)
+                {
+                    setKey(newKeyboard[(i + settings.symbols.indexOf(key) )% settings.n].value);
+                }
+            }
+        }
     }, [board, solvedBoard]);
-    console.log(keyboard);
 
     return (<View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {keyboard.map((k) => (k.numberof !== 0 ? (
@@ -39,13 +48,13 @@ const Keyboard = () => {
                 marginTop: 5,
                 backgroundColor: k.value === key ? '#3247e8ff' : '#fff',
             }}>{k.value + '\n'}
-            <Text style={{
-                fontSize:10,
-                position:'relative',
-                top:'-7px'
-            }}>
-                {k.numberof}
-            </Text>
+                <Text style={{
+                    fontSize: 10,
+                    position: 'relative',
+                    top: '-7px'
+                }}>
+                    {k.numberof}
+                </Text>
             </Text>
         ) : null)
 

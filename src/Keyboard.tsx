@@ -50,7 +50,7 @@ const Keyboard = () => {
                 backgroundColor: k.value === key ? '#5b6be6ff' : '#fff',
             }}>{k.value + '\n'}
                 <Text style={{
-                    fontSize: 10,
+                    fontSize: 8,
                     position: 'relative',
                     top: '-7px'
                 }}>

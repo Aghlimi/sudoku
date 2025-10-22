@@ -28,7 +28,7 @@ const clear = (settings: Config, board: Note[][], row: number, col: number, valu
 };
 
 export default function Board() {
-    const { settings, key, setError, error, notes, setNotes,setKey } = React.useContext(AppContext);
+    const { settings, key, setError, error, notes, setNotes, setKey } = React.useContext(AppContext);
     const { board, setBoard, solvedBoard, setSolvedBoard } = React.useContext(AppContext);
 
     const playHandler = (row: number, col: number) => {

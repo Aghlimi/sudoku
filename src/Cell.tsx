@@ -3,6 +3,7 @@ import { Config, Note } from './Types';
 import React from 'react';
 import { AppContext } from './context';
 import { validate } from './generater';
+import { useWindowDimensions } from 'react-native';
 const styles = StyleSheet.create({
     cell: {
         width: 20,
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const CellContent = ({ cell, note }: { cell: string, note: Note | null }) => {
+const CellContent = ({ cell, note, size }: { cell: string, note: Note | null, size: number }) => {
     const { key } = React.useContext(AppContext);
     return (
         <View style={{
@@ -36,6 +37,7 @@ const CellContent = ({ cell, note }: { cell: string, note: Note | null }) => {
                                 (<Text key={ind} style={{
                                     fontSize: 5,
                                     width: '100%',
+                                    height: '100%',
                                     backgroundColor: key == c ? '#3247e8ff' : '#fff'
                                 }}>{c != '0' ? c : null}</Text>)
                                 )
@@ -43,7 +45,13 @@ const CellContent = ({ cell, note }: { cell: string, note: Note | null }) => {
                     ))
                     : null
             ) :
-                <Text>{cell}</Text>}
+                <Text
+                    style={{
+                        height: size,
+                        fontSize: size *0.05,
+                        textAlign: 'center'
+                    }}
+                >{cell}</Text>}
         </View>
     )
 }
@@ -62,6 +70,8 @@ const Cell = ({ onPress, cell, rowIndex, cellIndex }: { onPress: () => void, cel
         }
         setNotes(newNote);
     };
+    const { width, height } = useWindowDimensions();
+    const size = (width > height ? height : width) - 100;
     return (
         <TouchableOpacity onLongPress={handleNote} onPress={() => {
             if (not) handleNote();
@@ -71,8 +81,10 @@ const Cell = ({ onPress, cell, rowIndex, cellIndex }: { onPress: () => void, cel
             backgroundColor: cell === key ? '#3247e8ff' : '#fff',
             borderBottomWidth: (rowIndex + 1) % settings.boxSize === 0 ? 3 : 1,
             borderRightWidth: (cellIndex + 1) % settings.boxSize === 0 ? 3 : 1,
+            width: size / settings.n,
+            height: size / settings.n,
         }}>
-            <CellContent key={`${rowIndex}-${cellIndex}`} cell={cell} note={notes && notes[rowIndex][cellIndex]} />
+            <CellContent key={`${rowIndex}-${cellIndex}`} cell={cell} size={size} note={notes && notes[rowIndex][cellIndex]} />
         </TouchableOpacity>
     );
 };

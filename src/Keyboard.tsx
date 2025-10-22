@@ -47,7 +47,7 @@ const Keyboard = () => {
                 textAlignVertical: 'center',
                 borderWidth: 1,
                 marginTop: 5,
-                backgroundColor: k.value === key ? '#3247e8ff' : '#fff',
+                backgroundColor: k.value === key ? '#5b6be6ff' : '#fff',
             }}>{k.value + '\n'}
                 <Text style={{
                     fontSize: 10,

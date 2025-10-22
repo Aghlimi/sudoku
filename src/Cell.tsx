@@ -38,7 +38,7 @@ const CellContent = ({ cell, note, size }: { cell: string, note: Note | null, si
                                     fontSize: 5,
                                     width: '100%',
                                     height: '100%',
-                                    backgroundColor: key == c ? '#3247e8ff' : '#fff'
+                                    backgroundColor: key == c ? '#5b6be6ff' : '#fff'
                                 }}>{c != '0' ? c : null}</Text>)
                                 )
                             }</View>
@@ -78,7 +78,7 @@ const Cell = ({ onPress, cell, rowIndex, cellIndex }: { onPress: () => void, cel
             else onPress()
         }} key={`${rowIndex}-${cellIndex}`} style={{
             ...styles.cell,
-            backgroundColor: cell === key ? '#3247e8ff' : '#fff',
+            backgroundColor: cell === key ? '#5b6be6ff' : '#fff',
             borderBottomWidth: (rowIndex + 1) % settings.boxSize === 0 ? 3 : 1,
             borderRightWidth: (cellIndex + 1) % settings.boxSize === 0 ? 3 : 1,
             width: size / settings.n,

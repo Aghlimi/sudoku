@@ -37,8 +37,8 @@ export default function Board() {
             setKey(board[row][col]);
             return;
         }
-        const isValid = validate(board, settings, row, col, key);
-        if (!isValid) { setError(error + 1); return; }
+
+        if (solvedBoard[row][col] !== key) { setError(error + 1); return; }
         const newBoard = board.map((r: string[]) => [...r]);
         newBoard[row][col] = key;
         clear(settings, notes, row, col, key);

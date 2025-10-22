@@ -5,19 +5,18 @@ const grn = (min: number, max: number): number =>
 
 const validate = (board: string[][], settings: Config, row: number, col: number, value: string): boolean => {
     for (let i = 0; i < settings.n; i++) {
-        if (board[row][i] !== '0' && i !== col && board[row][i] === value) return false;
-        if (board[i][col] !== '0' && i !== row && board[i][col] === value) return false;
+        if (board[row][i] === value) return false;
+        if (board[i][col] === value) return false;
     }
     const boxRow = Math.floor(row / settings.boxSize) * settings.boxSize;
     const boxCol = Math.floor(col / settings.boxSize) * settings.boxSize;
     for (let i = boxRow; i < boxRow + settings.boxSize; i++) {
         for (let j = boxCol; j < boxCol + settings.boxSize; j++) {
-            if (board[i][j] !== '0' && (i !== row || j !== col) && board[i][j] === value) return false;
+            if (board[i][j] === value) return false;
         }
     }
     return true;
 };
-
 
 const fillBoard = (board: string[][], settings: Config, row = 0, col = 0): boolean => {
     if (row === settings.n) return true;
@@ -61,7 +60,7 @@ const countSolutions = (board: string[][], settings: Config, row = 0, col = 0, l
 
 const removeCells = (board: string[][], settings: Config): string[][] => {
     const puzzle = board.map(row => [...row]);
-    let removeCount = 1;Math.floor(settings.n * settings.n * (
+    let removeCount = Math.floor(settings.n * settings.n * (
         settings.level === 'Easy' ? 0.3 :
         settings.level === 'Medium' ? 0.45 : 0.55
     ));
@@ -91,17 +90,6 @@ const generateSudoku = (settings: Config) => {
     }
 
     const solvedBoard = board.map(row => [...row]);
-    // check solvedBoard validity
-    for (let i = 0; i < settings.n; i++) {
-        for (let j = 0; j < settings.n; j++) {
-            const val = solvedBoard[i][j];
-            solvedBoard[i][j] = '0';
-            if (!validate(solvedBoard, settings, i, j, val)) {
-                throw new Error("Generated board is invalid");
-            }
-            solvedBoard[i][j] = val;
-        }
-    }
     const puzzleBoard = removeCells(board, settings);
 
     return { board: puzzleBoard, solvedBoard };

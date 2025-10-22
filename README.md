@@ -3,7 +3,8 @@
 A small Sudoku app built with React Native and Expo. The app supports multiple board sizes (4x4, 9x9, 16x16) and difficulty levels (easy, medium, hard).
 
 Live demo (deployed):
-[https://sudoku-aghlimi.vercel.app/](click to try it) 
+[click here to try](https://sudoku-aghlimi.vercel.app/)
+
 
 
 ## Project structure

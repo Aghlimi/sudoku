@@ -58,24 +58,49 @@ const countSolutions = (board: string[][], settings: Config, row = 0, col = 0, l
     return count;
 };
 
+const generatePlaceBoard = (settings: Config): { x: number, y: number }[] => {
+    const places: { x: number, y: number }[] = [];
+    for (let i = 0; i < settings.n; i++) {
+        for (let j = 0; j < settings.n; j++) {
+            if (settings.symbols.includes(i.toString()) && settings.symbols.includes(j.toString())) {
+                places.push({ x: i, y: j });
+            }
+        }
+    }
+    return places;
+};
+
+const chooseRandomNPlace = (places: { x: number, y: number }[], n: number): { x: number, y: number }[] => {
+    const selected: { x: number, y: number }[] = [];
+    for (let i = 0; i < n; i++) {
+        const index = grn(0, places.length - 1);
+        console.log(index);
+        selected.push(places[index]);
+        places.splice(index, 1);
+    }
+    return selected;
+};
+
 const removeCells = (board: string[][], settings: Config): string[][] => {
     const puzzle = board.map(row => [...row]);
     let removeCount = Math.floor(settings.n * settings.n * (
         settings.level === 'Easy' ? 0.3 :
-        settings.level === 'Medium' ? 0.45 : 0.55
+            settings.level === 'Medium' ? 0.45 : 0.55
     ));
-
-    while (removeCount > 0) {
-        const row = grn(0, settings.n - 1);
-        const col = grn(0, settings.n - 1);
-        if (puzzle[row][col] !== '0') {
-            const backup = puzzle[row][col];
-            puzzle[row][col] = '0';
-
-            if (countSolutions(puzzle, settings) !== 1) {
-            } else {
+    const places = generatePlaceBoard(settings);
+    const selectedPlaces = chooseRandomNPlace(places, removeCount);
+    for (let index = 0; index < selectedPlaces.length; index++) {
+        const cord = selectedPlaces[index];
+        if (!cord) break;
+        if (puzzle[cord.x][cord.y] !== '0') {
+            const backup = puzzle[cord.x][cord.y];
+            puzzle[cord.x][cord.y] = '0';
+            // to make it solvable with unique solution
+            // if (countSolutions(puzzle, settings) !== 1) {
+            //     puzzle[cord.x][cord.y] = backup;
+            // } else {
                 removeCount--;
-            }
+            // }
         }
     }
 

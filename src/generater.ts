@@ -62,9 +62,7 @@ const generatePlaceBoard = (settings: Config): { x: number, y: number }[] => {
     const places: { x: number, y: number }[] = [];
     for (let i = 0; i < settings.n; i++) {
         for (let j = 0; j < settings.n; j++) {
-            if (settings.symbols.includes(i.toString()) && settings.symbols.includes(j.toString())) {
-                places.push({ x: i, y: j });
-            }
+            places.push({ x: i, y: j });
         }
     }
     return places;
@@ -74,7 +72,6 @@ const chooseRandomNPlace = (places: { x: number, y: number }[], n: number): { x:
     const selected: { x: number, y: number }[] = [];
     for (let i = 0; i < n; i++) {
         const index = grn(0, places.length - 1);
-        console.log(index);
         selected.push(places[index]);
         places.splice(index, 1);
     }
@@ -95,7 +92,7 @@ const removeCells = (board: string[][], settings: Config): string[][] => {
         if (puzzle[cord.x][cord.y] !== '0') {
             const backup = puzzle[cord.x][cord.y];
             puzzle[cord.x][cord.y] = '0';
-            // to make it solvable with unique solution
+
             // if (countSolutions(puzzle, settings) !== 1) {
             //     puzzle[cord.x][cord.y] = backup;
             // } else {
